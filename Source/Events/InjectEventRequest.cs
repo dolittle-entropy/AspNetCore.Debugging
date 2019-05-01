@@ -39,6 +39,5 @@ namespace Dolittle.AspNetCore.Debugging.Events
         /// </summary>
         /// <value></value>
         public PropertyBag Event { get; set; }
-        //public Dictionary<string,object> Event { get; set; }
     }
 }

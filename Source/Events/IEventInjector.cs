@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-using Dolittle.Artifacts;
-using Dolittle.PropertyBags;
+using Dolittle.Events;
 using Dolittle.Runtime.Events;
 using Dolittle.Tenancy;
 
@@ -19,6 +18,6 @@ namespace Dolittle.AspNetCore.Debugging.Events
         /// <summary>
         /// Insert event into the event store and trigger event processors
         /// </summary>
-        void InjectEvent(TenantId tenant, Artifact artifact, EventSourceId eventSourceId, PropertyBag @event);
+        void InjectEvent(TenantId tenant, EventSourceId eventSourceId, IEvent @event);
     }
 }

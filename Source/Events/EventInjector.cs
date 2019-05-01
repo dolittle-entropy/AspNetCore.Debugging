@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using Dolittle.Artifacts;
 using Dolittle.DependencyInversion;
+using Dolittle.Events;
 using Dolittle.Execution;
 using Dolittle.Logging;
 using Dolittle.PropertyBags;
@@ -25,6 +26,7 @@ namespace Dolittle.AspNetCore.Debugging.Events
         readonly FactoryFor<IEventStore> _getEventStore;
         readonly IScopedEventProcessingHub _processingHub;
         readonly IExecutionContextManager _executionContextManager;
+        readonly IArtifactTypeMap _artifactTypeMap;
         readonly ILogger _logger;
 
         /// <summary>
@@ -33,24 +35,27 @@ namespace Dolittle.AspNetCore.Debugging.Events
         /// <param name="getEventStore"><see cref="FactoryFor{IEventStore}" /> factory function that returns a correctly scoped <see cref="IEventStore" /></param>
         /// <param name="processingHub"><see cref="IScopedEventProcessingHub" /> for processing events from the <see cref="CommittedEventStream" /></param>
         /// <param name="executionContextManager"></param>
+        /// <param name="artifactTypeMap"></param>
         /// <param name="logger"><see cref="ILogger" /> for logging</param>
         public EventInjector(
             FactoryFor<IEventStore> getEventStore,
             IScopedEventProcessingHub processingHub, 
             IExecutionContextManager executionContextManager,
+            IArtifactTypeMap artifactTypeMap,
             ILogger logger
         )
         {
             _getEventStore = getEventStore;
             _processingHub = processingHub;
             _executionContextManager = executionContextManager;
+            _artifactTypeMap = artifactTypeMap;
             _logger = logger;
         }
 
         /// <summary>
         /// Injects an event
         /// </summary>
-        public void InjectEvent(TenantId tenant, Artifact artifact, EventSourceId eventSourceId, PropertyBag @event)
+        public void InjectEvent(TenantId tenant, EventSourceId eventSourceId, IEvent @event)
         {
             _logger.Information($"Injecting event!");
 
@@ -58,6 +63,7 @@ namespace Dolittle.AspNetCore.Debugging.Events
             var executionContext = _executionContextManager.Current;
             using (var eventStore = _getEventStore())
             {
+                var artifact = _artifactTypeMap.GetArtifactFor(@event.GetType());
                 var eventSourceKey = new EventSourceKey(eventSourceId, artifact.Id);
                 var version = eventStore.GetNextVersionFor(eventSourceKey);
 
@@ -76,7 +82,7 @@ namespace Dolittle.AspNetCore.Debugging.Events
                                 DateTimeOffset.Now,
                                 executionContext
                             ),
-                            @event
+                            @event.ToPropertyBag()
                         )
                     })
                 );
