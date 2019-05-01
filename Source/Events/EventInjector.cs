@@ -1,0 +1,92 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+using System;
+using System.Collections.Generic;
+using Dolittle.Artifacts;
+using Dolittle.DependencyInversion;
+using Dolittle.Execution;
+using Dolittle.Logging;
+using Dolittle.PropertyBags;
+using Dolittle.Runtime.Events;
+using Dolittle.Runtime.Events.Processing;
+using Dolittle.Runtime.Events.Store;
+using Dolittle.Tenancy;
+
+namespace Dolittle.AspNetCore.Debugging.Events
+{
+    /// <summary>
+    /// Represents an implementation of an <see cref="IEventInjector"/>.
+    /// </summary>
+    public class EventInjector : IEventInjector
+    {
+        readonly FactoryFor<IEventStore> _getEventStore;
+        readonly IScopedEventProcessingHub _processingHub;
+        readonly IExecutionContextManager _executionContextManager;
+        readonly ILogger _logger;
+
+        /// <summary>
+        /// Instanciates a new <see cref="EventInjector"/>
+        /// </summary>
+        /// <param name="getEventStore"><see cref="FactoryFor{IEventStore}" /> factory function that returns a correctly scoped <see cref="IEventStore" /></param>
+        /// <param name="processingHub"><see cref="IScopedEventProcessingHub" /> for processing events from the <see cref="CommittedEventStream" /></param>
+        /// <param name="executionContextManager"></param>
+        /// <param name="logger"><see cref="ILogger" /> for logging</param>
+        public EventInjector(
+            FactoryFor<IEventStore> getEventStore,
+            IScopedEventProcessingHub processingHub, 
+            IExecutionContextManager executionContextManager,
+            ILogger logger
+        )
+        {
+            _getEventStore = getEventStore;
+            _processingHub = processingHub;
+            _executionContextManager = executionContextManager;
+            _logger = logger;
+        }
+
+        /// <summary>
+        /// Injects an event
+        /// </summary>
+        public void InjectEvent(TenantId tenant, Artifact artifact, EventSourceId eventSourceId, PropertyBag @event)
+        {
+            _logger.Information($"Injecting event!");
+
+            _executionContextManager.CurrentFor(tenant);
+            var executionContext = _executionContextManager.Current;
+            using (var eventStore = _getEventStore())
+            {
+                var eventSourceKey = new EventSourceKey(eventSourceId, artifact.Id);
+                var version = eventStore.GetNextVersionFor(eventSourceKey);
+
+                var uncommittedEventStream = new UncommittedEventStream(
+                    CommitId.New(),
+                    executionContext.CorrelationId,
+                    new VersionedEventSource(version, eventSourceKey),
+                    DateTimeOffset.Now,
+                    EventStream.From(new [] {
+                        new EventEnvelope(
+                            new EventMetadata(
+                                EventId.New(),
+                                new VersionedEventSource(version, eventSourceKey),
+                                executionContext.CorrelationId,
+                                artifact,
+                                DateTimeOffset.Now,
+                                executionContext
+                            ),
+                            @event
+                        )
+                    })
+                );
+
+                _logger.Information("Commit events to store");
+                var committedEventStream = eventStore.Commit(uncommittedEventStream);
+                
+                _logger.Information("Process committed events");
+                _processingHub.Process(committedEventStream);
+            }
+        }
+    }
+}
