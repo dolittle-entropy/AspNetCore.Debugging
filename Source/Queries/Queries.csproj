@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dolittle.SDK.Artifacts" Version="3.*" />
-    <PackageReference Include="Dolittle.Runtime.Queries" Version="3.*" />
-    <PackageReference Include="Dolittle.Runtime.Queries.Coordination" Version="3.*" />
-    <PackageReference Include="Dolittle.AspNetCore.Bootstrap" Version="3.*" />
+    <PackageReference Include="Dolittle.SDK.Artifacts" Version="4.*" />
+    <PackageReference Include="Dolittle.Runtime.Queries" Version="4.*" />
+    <PackageReference Include="Dolittle.Runtime.Queries.Coordination" Version="4.*" />
+    <PackageReference Include="Dolittle.AspNetCore.Bootstrap" Version="4.*" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 </Project>
