@@ -8,7 +8,7 @@
     <PackageReference Include="Dolittle.Common" Version="1.*" />
     <PackageReference Include="Dolittle.SDK.Artifacts" Version="4.*" />
     <PackageReference Include="Dolittle.Runtime.Events" Version="4.*" />
-    <PackageReference Include="Dolittle.AspNetCore.Bootstrap" Version="5.*" />
+    <PackageReference Include="Dolittle.AspNetCore.Bootstrap" Version="7.*" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 </Project>
