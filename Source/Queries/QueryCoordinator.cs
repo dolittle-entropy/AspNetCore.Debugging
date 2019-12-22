@@ -1,9 +1,7 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Dolittle.Artifacts;
+using System;
 using Dolittle.DependencyInversion;
 using Dolittle.Execution;
 using Dolittle.Queries;
@@ -13,7 +11,7 @@ using IRuntimeQueryCoordinator = Dolittle.Queries.Coordination.IQueryCoordinator
 namespace Dolittle.AspNetCore.Debugging.Queries
 {
     /// <summary>
-    /// An implementation of <see cref="IQueryCoordinator"/>
+    /// An implementation of <see cref="IQueryCoordinator"/>.
     /// </summary>
     public class QueryCoordinator : IQueryCoordinator
     {
@@ -22,16 +20,15 @@ namespace Dolittle.AspNetCore.Debugging.Queries
         readonly IContainer _container;
 
         /// <summary>
-        /// Instanciates a new <see cref="QueryCoordinator"/>
+        /// Initializes a new instance of the <see cref="QueryCoordinator"/> class.
         /// </summary>
-        /// <param name="executionContextManager"></param>
-        /// <param name="runtimeQueryCoordinator"></param>
-        /// <param name="container"></param>
+        /// <param name="executionContextManager"><see cref="IExecutionContextManager"/> for working with <see cref="ExecutionContext"/>.</param>
+        /// <param name="runtimeQueryCoordinator"><see cref="IRuntimeQueryCoordinator"/> for coordinating queries.</param>
+        /// <param name="container"><see cref="IContainer"/> for getting instances of queries.</param>
         public QueryCoordinator(
             IExecutionContextManager executionContextManager,
             IRuntimeQueryCoordinator runtimeQueryCoordinator,
-            IContainer container
-        )
+            IContainer container)
         {
             _executionContextManager = executionContextManager;
             _runtimeQueryCoordinator = runtimeQueryCoordinator;
@@ -39,14 +36,14 @@ namespace Dolittle.AspNetCore.Debugging.Queries
         }
 
         /// <inheritdoc/>
-        public QueryResult Handle(TenantId tenant, IQuery query)
+        public QueryResult Execute(TenantId tenant, IQuery query)
         {
             _executionContextManager.CurrentFor(tenant);
             var instance = _container.Get(query.GetType()) as IQuery;
 
             foreach (var property in query.GetType().GetProperties())
             {
-                if (!property.Name.Equals("Query"))
+                if (!property.Name.Equals("Query", StringComparison.InvariantCulture))
                 {
                     property.SetValue(instance, property.GetValue(query));
                 }
