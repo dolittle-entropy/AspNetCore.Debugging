@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../default.props" />
+
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>Dolittle.AspNetCore.Debugging.Commands</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dolittle.Common" Version="1.*" />
     <PackageReference Include="Dolittle.SDK.Artifacts" Version="4.*" />
     <PackageReference Include="Dolittle.SDK.Commands" Version="4.*" />
     <PackageReference Include="Dolittle.SDK.Commands.Coordination" Version="4.*" />
