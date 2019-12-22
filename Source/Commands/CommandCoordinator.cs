@@ -1,12 +1,8 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Dolittle.Artifacts;
 using Dolittle.Commands;
 using Dolittle.Execution;
-using Dolittle.PropertyBags;
 using Dolittle.Runtime.Commands;
 using Dolittle.Tenancy;
 using IRuntimeCommandCoordinator = Dolittle.Commands.Coordination.ICommandCoordinator;
@@ -14,7 +10,7 @@ using IRuntimeCommandCoordinator = Dolittle.Commands.Coordination.ICommandCoordi
 namespace Dolittle.AspNetCore.Debugging.Commands
 {
     /// <summary>
-    /// An implementation of <see cref="ICommandCoordinator"/>
+    /// An implementation of <see cref="ICommandCoordinator"/>.
     /// </summary>
     public class CommandCoordinator : ICommandCoordinator
     {
@@ -22,12 +18,13 @@ namespace Dolittle.AspNetCore.Debugging.Commands
         readonly IRuntimeCommandCoordinator _runtimeCommandCoordinator;
 
         /// <summary>
-        /// Instanciates a new <see cref="CommandCoordinator"/>
+        /// Initializes a new instance of the <see cref="CommandCoordinator"/> class.
         /// </summary>
+        /// <param name="executionContextManager"><see cref="IExecutionContextManager"/> for working with <see cref="ExecutionContext"/>.</param>
+        /// <param name="runtimeCommandCoordinator"><see cref="IRuntimeCommandCoordinator"/> for handling commands.</param>
         public CommandCoordinator(
             IExecutionContextManager executionContextManager,
-            IRuntimeCommandCoordinator runtimeCommandCoordinator
-        )
+            IRuntimeCommandCoordinator runtimeCommandCoordinator)
         {
             _executionContextManager = executionContextManager;
             _runtimeCommandCoordinator = runtimeCommandCoordinator;

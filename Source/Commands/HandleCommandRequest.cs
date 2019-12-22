@@ -1,7 +1,5 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Dolittle.Artifacts;
 using Dolittle.PropertyBags;
@@ -10,26 +8,23 @@ using Dolittle.Tenancy;
 namespace Dolittle.AspNetCore.Debugging.Commands
 {
     /// <summary>
-    /// Captures the information necessary to call the command coordinator
+    /// Captures the information necessary to call the command coordinator.
     /// </summary>
     public class HandleCommandRequest
     {
         /// <summary>
-        /// The tenant to handle the command in
+        /// Gets or sets the tenant to handle the command in.
         /// </summary>
-        /// <value></value>
         public TenantId Tenant { get; set; }
 
         /// <summary>
-        /// The artifact identifying the command
+        /// Gets or sets the artifact identifying the command.
         /// </summary>
-        /// <value></value>
         public Artifact Artifact { get; set; }
 
         /// <summary>
-        /// The actual command data
+        /// Gets or sets the actual command data.
         /// </summary>
-        /// <value></value>
         public PropertyBag Command { get; set; }
     }
 }
