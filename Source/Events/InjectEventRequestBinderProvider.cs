@@ -1,7 +1,6 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 namespace Dolittle.AspNetCore.Debugging.Events
 {
     /// <summary>
-    /// Represents a <see cref="IModelBinderProvider"/> for providing <see cref="InjectEventRequestBinder"/>
+    /// Represents a <see cref="IModelBinderProvider"/> for providing <see cref="InjectEventRequestBinder"/>.
     /// </summary>
     public class InjectEventRequestBinderProvider : IModelBinderProvider
     {

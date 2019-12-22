@@ -1,10 +1,7 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dolittle. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Dolittle. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
 using Dolittle.Artifacts;
 using Dolittle.DependencyInversion;
 using Dolittle.Events;
@@ -30,20 +27,19 @@ namespace Dolittle.AspNetCore.Debugging.Events
         readonly ILogger _logger;
 
         /// <summary>
-        /// Instanciates a new <see cref="EventInjector"/>
+        /// Initializes a new instance of the <see cref="EventInjector"/> class.
         /// </summary>
-        /// <param name="getEventStore"><see cref="FactoryFor{IEventStore}" /> factory function that returns a correctly scoped <see cref="IEventStore" /></param>
-        /// <param name="processingHub"><see cref="IScopedEventProcessingHub" /> for processing events from the <see cref="CommittedEventStream" /></param>
-        /// <param name="executionContextManager"></param>
-        /// <param name="artifactTypeMap"></param>
-        /// <param name="logger"><see cref="ILogger" /> for logging</param>
+        /// <param name="getEventStore"><see cref="FactoryFor{IEventStore}" /> factory function that returns a correctly scoped <see cref="IEventStore" />.</param>
+        /// <param name="processingHub"><see cref="IScopedEventProcessingHub" /> for processing events from the <see cref="CommittedEventStream" />.</param>
+        /// <param name="executionContextManager"><see cref="IExecutionContextManager"/> for working with <see cref="ExecutionContext"/>.</param>
+        /// <param name="artifactTypeMap"><see cref="IArtifactTypeMap"/> for mapping artifacts and types.</param>
+        /// <param name="logger"><see cref="ILogger" /> for logging.</param>
         public EventInjector(
             FactoryFor<IEventStore> getEventStore,
-            IScopedEventProcessingHub processingHub, 
+            IScopedEventProcessingHub processingHub,
             IExecutionContextManager executionContextManager,
             IArtifactTypeMap artifactTypeMap,
-            ILogger logger
-        )
+            ILogger logger)
         {
             _getEventStore = getEventStore;
             _processingHub = processingHub;
@@ -52,9 +48,7 @@ namespace Dolittle.AspNetCore.Debugging.Events
             _logger = logger;
         }
 
-        /// <summary>
-        /// Injects an event
-        /// </summary>
+        /// <inheritdoc/>
         public void InjectEvent(TenantId tenant, EventSourceId eventSourceId, IEvent @event)
         {
             _logger.Information($"Injecting event!");
@@ -72,7 +66,8 @@ namespace Dolittle.AspNetCore.Debugging.Events
                     executionContext.CorrelationId,
                     new VersionedEventSource(version, eventSourceKey),
                     DateTimeOffset.Now,
-                    EventStream.From(new [] {
+                    EventStream.From(new[]
+                    {
                         new EventEnvelope(
                             new EventMetadata(
                                 EventId.New(),
@@ -80,16 +75,13 @@ namespace Dolittle.AspNetCore.Debugging.Events
                                 executionContext.CorrelationId,
                                 artifact,
                                 DateTimeOffset.Now,
-                                executionContext
-                            ),
-                            @event.ToPropertyBag()
-                        )
-                    })
-                );
+                                executionContext),
+                            @event.ToPropertyBag())
+                    }));
 
                 _logger.Information("Commit events to store");
                 var committedEventStream = eventStore.Commit(uncommittedEventStream);
-                
+
                 _logger.Information("Process committed events");
                 _processingHub.Process(committedEventStream);
             }
